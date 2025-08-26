@@ -26,22 +26,29 @@ cd $PROJECT_DIR
 echo "Stopping existing containers for $PROJECT_NAME..."
 docker-compose down 2>/dev/null || true
 
-# Create .env based on storage type
-if [ "$STORAGE_TYPE" = "memory" ]; then
-    cat > .env << EOF
+# Create .env only if it doesn't exist, otherwise preserve it
+if [ ! -f ".env" ]; then
+    echo "Creating new .env file..."
+    if [ "$STORAGE_TYPE" = "memory" ]; then
+        cat > .env << EOF
 NODE_ENV=production
 PORT=3000
 STORAGE_TYPE=memory
 # Add other env vars as needed
 EOF
-else
-    cat > .env << EOF
+    else
+        cat > .env << EOF
 NODE_ENV=production
 PORT=3000
 STORAGE_TYPE=database
 DATABASE_URL=postgresql://user:password@localhost:5432/db_${PROJECT_NAME}
 # Add other env vars as needed
 EOF
+    fi
+else
+    echo "✅ Using existing .env file (not overwriting)"
+    echo "Current .env contents:"
+    cat .env
 fi
 
 # Create docker-compose.yml
