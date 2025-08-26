@@ -1,0 +1,148 @@
+root@vmi2769137:~/www/proyecto_1# nano .env
+root@vmi2769137:~/www/proyecto_1# sudo netstat -tlnp | grep 5433
+sudo: netstat: command not found
+root@vmi2769137:~/www/proyecto_1# sudo netstat -tlnp | grep 5433
+sudo: netstat: command not found
+root@vmi2769137:~/www/proyecto_1# git pull origin main
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (7/7), done.
+remote: Total 8 (delta 2), reused 6 (delta 1), pack-reused 0 (from 0)
+Unpacking objects: 100% (8/8), 4.75 KiB | 2.38 MiB/s, done.
+From https://github.com/YaviewLomeli369/pr_vpnready
+ * branch            main       -> FETCH_HEAD
+   51a3989..6a7f8bf  main       -> origin/main
+Updating 51a3989..6a7f8bf
+Fast-forward
+ ...p-auto-backup-env-with-Radar--1756224419148_1756224419163.txt |  95 +++++++++++++++++++++++++
+ setup-database.sh                                                | 110 +++++++++++++++++++++++++++++
+ test-database.sh                                                 |  31 ++++++++
+ 3 files changed, 236 insertions(+)
+ create mode 100644 attached_assets/Pasted-Node-js-v20-19-4-dotenv-17-2-1-injecting-env-0-from-env-tip-auto-backup-env-with-Radar--1756224419148_1756224419163.txt
+ create mode 100755 setup-database.sh
+ create mode 100755 test-database.sh
+root@vmi2769137:~/www/proyecto_1# chmod +x setup-database.sh
+root@vmi2769137:~/www/proyecto_1# ./setup-database.sh proyecto_1 5433
+🚀 Configurando base de datos para: proyecto_1
+📊 Base de datos: proyecto_1_db
+👤 Usuario: yaviewlomeli
+🔌 Puerto: 5433
+🖥️  Host: 209.145.57.10
+
+=== Configurando PostgreSQL ===
+👤 Verificando/creando usuario yaviewlomeli...
+Ejecutando: DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'yaviewlomeli') THEN
+        CREATE USER yaviewlomeli WITH PASSWORD 'Losy990209bn7*';
+        RAISE NOTICE 'Usuario yaviewlomeli creado exitosamente';
+    ELSE
+        RAISE NOTICE 'Usuario yaviewlomeli ya existe, actualizando permisos...';
+    END IF;
+END
+$$;
+NOTICE:  Usuario yaviewlomeli ya existe, actualizando permisos...
+DO
+🗄️  Verificando/creando base de datos proyecto_1_db...
+Ejecutando: SELECT 'CREATE DATABASE proyecto_1_db' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'proyecto_1_db')\gexec
+ERROR:  syntax error at or near "\"
+LINE 1: ...LECT FROM pg_database WHERE datname = 'proyecto_1_db')\gexec
+                                                                 ^
+🔐 Otorgando permisos...
+Ejecutando: GRANT ALL PRIVILEGES ON DATABASE proyecto_1_db TO yaviewlomeli;
+ERROR:  database "proyecto_1_db" does not exist
+Ejecutando: ALTER DATABASE proyecto_1_db OWNER TO yaviewlomeli;
+ERROR:  database "proyecto_1_db" does not exist
+📋 Configurando permisos de esquema...
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "proyecto_1_db" does not exist
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "proyecto_1_db" does not exist
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "proyecto_1_db" does not exist
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "proyecto_1_db" does not exist
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5433" failed: FATAL:  database "proyecto_1_db" does not exist
+
+📝 Generando archivo .env...
+
+✅ ¡Configuración completada!
+📁 Archivo generado: proyecto_1.env
+🔄 Para aplicar las migraciones de Drizzle:
+   1. Copia el archivo proyecto_1.env a tu proyecto como .env
+   2. Ejecuta: npx drizzle-kit push
+
+🌐 URL de conexión:
+postgres://yaviewlomeli:Losy990209bn7*@209.145.57.10:5433/proyecto_1_db
+root@vmi2769137:~/www/proyecto_1# psql -h 127.0.0.1 -p 5433 -U yaviewlomeli -d proyecto_1_db -p 5433
+Password for user yaviewlomeli:
+psql: error: connection to server at "127.0.0.1", port 5433 failed: FATAL:  database "proyecto_1_db" does not exist
+root@vmi2769137:~/www/proyecto_1# psql -v
+/usr/lib/postgresql/16/bin/psql: option requires an argument -- 'v'
+psql: hint: Try "psql --help" for more information.
+root@vmi2769137:~/www/proyecto_1# psql --v
+/usr/lib/postgresql/16/bin/psql: option '--v' is ambiguous; possibilities: '--variable' '--version'
+psql: hint: Try "psql --help" for more information.
+root@vmi2769137:~/www/proyecto_1# psql --help
+psql is the PostgreSQL interactive terminal.
+
+Usage:
+  psql [OPTION]... [DBNAME [USERNAME]]
+
+General options:
+  -c, --command=COMMAND    run only single command (SQL or internal) and exit
+  -d, --dbname=DBNAME      database name to connect to (default: "root")
+  -f, --file=FILENAME      execute commands from file, then exit
+  -l, --list               list available databases, then exit
+  -v, --set=, --variable=NAME=VALUE
+                           set psql variable NAME to VALUE
+                           (e.g., -v ON_ERROR_STOP=1)
+  -V, --version            output version information, then exit
+  -X, --no-psqlrc          do not read startup file (~/.psqlrc)
+  -1 ("one"), --single-transaction
+                           execute as a single transaction (if non-interactive)
+  -?, --help[=options]     show this help, then exit
+      --help=commands      list backslash commands, then exit
+      --help=variables     list special variables, then exit
+
+Input and output options:
+  -a, --echo-all           echo all input from script
+  -b, --echo-errors        echo failed commands
+  -e, --echo-queries       echo commands sent to server
+  -E, --echo-hidden        display queries that internal commands generate
+  -L, --log-file=FILENAME  send session log to file
+  -n, --no-readline        disable enhanced command line editing (readline)
+  -o, --output=FILENAME    send query results to file (or |pipe)
+  -q, --quiet              run quietly (no messages, only query output)
+  -s, --single-step        single-step mode (confirm each query)
+  -S, --single-line        single-line mode (end of line terminates SQL command)
+
+Output format options:
+  -A, --no-align           unaligned table output mode
+      --csv                CSV (Comma-Separated Values) table output mode
+  -F, --field-separator=STRING
+                           field separator for unaligned output (default: "|")
+  -H, --html               HTML table output mode
+  -P, --pset=VAR[=ARG]     set printing option VAR to ARG (see \pset command)
+  -R, --record-separator=STRING
+                           record separator for unaligned output (default: newline)
+  -t, --tuples-only        print rows only
+  -T, --table-attr=TEXT    set HTML table tag attributes (e.g., width, border)
+  -x, --expanded           turn on expanded table output
+  -z, --field-separator-zero
+                           set field separator for unaligned output to zero byte
+  -0, --record-separator-zero
+                           set record separator for unaligned output to zero byte
+
+Connection options:
+  -h, --host=HOSTNAME      database server host or socket directory (default: "/var/run/postgresql")
+  -p, --port=PORT          database server port (default: "5432")
+  -U, --username=USERNAME  database user name (default: "root")
+  -w, --no-password        never prompt for password
+  -W, --password           force password prompt (should happen automatically)
+
+For more information, type "\?" (for internal commands) or "\help" (for SQL
+commands) from within psql, or consult the psql section in the PostgreSQL
+documentation.
+
+Report bugs to <pgsql-bugs@lists.postgresql.org>.
+PostgreSQL home page: <https://www.postgresql.org/>
+root@vmi2769137:~/www/proyecto_1# psql -V
+psql (PostgreSQL) 16.10 (Ubuntu 16.10-1.pgdg22.04+1)
+root@vmi2769137:~/www/proyecto_1#
