@@ -6,3 +6,4 @@ server/public
 *.tar.gz
 .env.backup
 attached-assets/
+id_ed25519.pub
