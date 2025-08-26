@@ -34,6 +34,25 @@ execute_sql() {
 }
 
 echo ""
+echo "=== Verificando PostgreSQL ==="
+
+# Verificar si PostgreSQL está corriendo
+if ! pgrep -f "postgres.*$DB_PORT" > /dev/null; then
+    echo "⚠️  PostgreSQL no parece estar corriendo en el puerto $DB_PORT"
+    echo "🔄 Iniciando PostgreSQL..."
+    sudo systemctl start postgresql
+    sleep 2
+fi
+
+# Verificar conexión
+if ! sudo -u postgres psql -p $DB_PORT -c '\q' 2>/dev/null; then
+    echo "❌ Error: No se puede conectar a PostgreSQL en el puerto $DB_PORT"
+    echo "💡 Asegúrate de que PostgreSQL esté configurado para usar el puerto $DB_PORT"
+    exit 1
+fi
+
+echo "✅ PostgreSQL está disponible en el puerto $DB_PORT"
+echo ""
 echo "=== Configurando PostgreSQL ==="
 
 # 1. Crear usuario si no existe (con manejo de errores)
@@ -51,7 +70,7 @@ END
 
 # 2. Crear base de datos si no existe
 echo "🗄️  Verificando/creando base de datos $DB_NAME..."
-execute_sql "SELECT 'CREATE DATABASE $DB_NAME' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME')\\gexec"
+sudo -u postgres psql -p $DB_PORT -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || sudo -u postgres psql -p $DB_PORT -c "CREATE DATABASE $DB_NAME;"
 
 # 3. Otorgar permisos
 echo "🔐 Otorgando permisos..."
