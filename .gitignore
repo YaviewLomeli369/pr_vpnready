@@ -5,3 +5,4 @@ server/public
 .env
 *.tar.gz
 .env.backup
+attached-assets/
