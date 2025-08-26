@@ -34,14 +34,19 @@ if [ ! -f ".env" ]; then
 NODE_ENV=production
 PORT=3000
 STORAGE_TYPE=memory
+# Memory storage - no database needed
 # Add other env vars as needed
+SITE_NAME=${PROJECT_NAME}
 EOF
     else
+        # For database storage, use localhost connection
         cat > .env << EOF
 NODE_ENV=production
 PORT=3000
 STORAGE_TYPE=database
-DATABASE_URL=postgresql://user:password@localhost:5432/db_${PROJECT_NAME}
+DATABASE_URL=postgresql://${PROJECT_NAME}_user:${PROJECT_NAME}_pass@localhost:5433/db_${PROJECT_NAME}
+# Database storage configuration
+SITE_NAME=${PROJECT_NAME}
 # Add other env vars as needed
 EOF
     fi
@@ -49,6 +54,23 @@ else
     echo "✅ Using existing .env file (not overwriting)"
     echo "Current .env contents:"
     cat .env
+fi
+
+# Verify .env configuration
+echo ""
+echo "=== Verifying Environment Configuration ==="
+if grep -q "STORAGE_TYPE=memory" .env; then
+    echo "✅ Memory storage configured - no database required"
+elif grep -q "STORAGE_TYPE=database" .env; then
+    echo "🔍 Database storage configured"
+    if grep -q "localhost" .env || grep -q "127.0.0.1" .env; then
+        echo "✅ Using local database connection"
+    else
+        echo "⚠️  WARNING: External database detected - ensure it's accessible"
+    fi
+else
+    echo "⚠️  No storage type specified, will default to memory"
+fi
 fi
 
 # Create docker-compose.yml
